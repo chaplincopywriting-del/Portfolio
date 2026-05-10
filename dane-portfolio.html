@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dane — Digital Marketing & Product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #111010;
+    --bg2:       #171615;
+    --bg3:       #1e1c1b;
+    --border:    rgba(255,255,255,0.08);
+    --cream:     #ede8e0;
+    --cream-dim: rgba(237,232,224,0.55);
+    --amber:     #c8922a;
+    --amber-light: #e0aa48;
+    --amber-dim: rgba(200,146,42,0.15);
+    --mono:      'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.65;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ── */
+  #cursor {
+    position: fixed; top: 0; left: 0; z-index: 9999;
+    width: 10px; height: 10px;
+    background: var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%,-50%);
+    transition: transform 0.08s ease, width 0.25s ease, height 0.25s ease, background 0.25s ease;
+    mix-blend-mode: normal;
+  }
+  #cursor.hover {
+    width: 36px; height: 36px;
+    background: transparent;
+    border: 1.5px solid var(--amber);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid transparent;
+    transition: background 0.4s, border-color 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(17,16,16,0.92);
+    border-color: var(--border);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 400;
+  }
+  .nav-links a:hover { color: var(--amber); }
+
+  /* ── SECTION WRAPPER ── */
+  section { padding: 7rem 3rem; max-width: 1280px; margin: 0 auto; }
+
+  /* ── REVEAL ANIMATION ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── RULE ── */
+  .rule {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1rem;
+  }
+
+  /* ─────────────────────────────
+     HERO
+  ───────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 3rem 5rem;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-line {
+    position: absolute;
+    top: 0; right: 14vw;
+    width: 1px; height: 100%;
+    background: var(--border);
+  }
+  .hero-bg-line:nth-child(2) { right: 28vw; }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 13vw, 14rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  .hero-name em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .hero-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0;
+    opacity: 0;
+    animation: fadeIn 0.6s 0.7s ease forwards;
+  }
+
+  .hero-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.85s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  .hero-tagline {
+    max-width: 580px;
+    font-size: clamp(1rem, 2.2vw, 1.35rem);
+    font-weight: 300;
+    color: var(--cream-dim);
+    line-height: 1.5;
+  }
+  .hero-tagline strong {
+    color: var(--cream);
+    font-weight: 500;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: var(--amber);
+    color: #0e0d0c;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .hero-cta:hover { background: var(--amber-light); transform: translateY(-2px); }
+  .hero-cta svg { width: 14px; height: 14px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ─────────────────────────────
+     ABOUT
+  ───────────────────────────── */
+  #about {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-left {}
+  .about-index {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+  .about-right p {
+    font-size: 1.15rem;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+  }
+  .about-right p strong { color: var(--cream); font-weight: 500; }
+  .about-right p:last-child { margin-bottom: 0; }
+
+  /* ─────────────────────────────
+     SKILLS
+  ───────────────────────────── */
+  #skills .skills-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+  #skills h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+  .skill-item {
+    padding: 1.5rem 1.75rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .skill-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--amber);
+    transition: width 0.35s cubic-bezier(0.22,1,0.36,1);
+  }
+  .skill-item:hover { background: var(--bg3); }
+  .skill-item:hover::after { width: 100%; }
+  .skill-item .skill-num {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+  }
+  .skill-item .skill-name {
+    font-size: 0.92rem;
+    font-weight: 400;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+
+  /* ─────────────────────────────
+     PROJECTS
+  ───────────────────────────── */
+  #projects h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+  .project-card {
+    background: var(--bg2);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.25s;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  }
+  .project-card:hover { background: var(--bg3); }
+  .project-card:hover::before { transform: scaleX(1); }
+
+  .project-tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .project-tag::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--amber);
+  }
+  .project-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+    line-height: 1.2;
+  }
+  .project-desc {
+    font-size: 0.88rem;
+    color: var(--cream-dim);
+    line-height: 1.75;
+    flex: 1;
+    margin-bottom: 1.75rem;
+  }
+  .project-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+  }
+  .project-skills span {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--border);
+    color: var(--cream-dim);
+  }
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(200,146,42,0.3);
+    padding-bottom: 0.15rem;
+    width: fit-content;
+    transition: border-color 0.2s, gap 0.2s;
+  }
+  .project-link:hover { border-color: var(--amber); gap: 0.9rem; }
+
+  /* ─────────────────────────────
+     SERVICES
+  ───────────────────────────── */
+  #services {
+    background: var(--bg2);
+    max-width: 100%;
+    padding: 7rem 3rem;
+  }
+  #services .inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  #services h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 3.5rem;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+  .service-card {
+    padding: 2.75rem 2.25rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.25s;
+  }
+  .service-card:hover { background: var(--bg3); }
+  .service-num {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .service-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  .service-desc {
+    font-size: 0.875rem;
+    color: var(--cream-dim);
+    line-height: 1.75;
+  }
+  .service-icon {
+    position: absolute;
+    bottom: 2rem; right: 2rem;
+    width: 28px; height: 28px;
+    color: rgba(200,146,42,0.25);
+  }
+
+  /* ─────────────────────────────
+     CONTACT
+  ───────────────────────────── */
+  #contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .contact-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  .contact-left h2 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+  .contact-left p {
+    color: var(--cream-dim);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 380px;
+  }
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.75rem 2rem;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--cream);
+    transition: background 0.2s, padding-left 0.25s;
+  }
+  .contact-link:hover {
+    background: var(--bg3);
+    padding-left: 2.4rem;
+  }
+  .contact-link:last-child { border-bottom: none; }
+  .contact-link-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .contact-link-type {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .contact-link-value {
+    font-size: 0.95rem;
+    font-weight: 400;
+  }
+  .contact-link svg { width: 16px; height: 16px; color: var(--amber-dim); transition: color 0.2s; }
+  .contact-link:hover svg { color: var(--amber); }
+
+  /* ─────────────────────────────
+     FOOTER
+  ───────────────────────────── */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+  }
+  footer p {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--cream-dim);
+    text-transform: uppercase;
+  }
+  .footer-amber { color: var(--amber); }
+
+  /* ─────────────────────────────
+     RESPONSIVE
+  ───────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 1.25rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    #hero { padding: 0 1.5rem 4rem; }
+    #about { grid-template-columns: 1fr; gap: 2rem; }
+    .about-index { font-size: 3rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .service-card { border-right: none; border-bottom: 1px solid var(--border); }
+    #services { padding: 5rem 1.5rem; }
+    #contact { grid-template-columns: 1fr; gap: 3rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; }
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .skill-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+
+<!-- Navigation -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Dane.</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg-line"></div>
+  <div class="hero-bg-line"></div>
+  <p class="hero-eyebrow">Digital Marketing &amp; Product — Available for hire</p>
+  <h1 class="hero-name">Da<em>ne</em>.</h1>
+  <div class="hero-divider"></div>
+  <div class="hero-bottom">
+    <p class="hero-tagline">
+      I turn <strong>data into decisions</strong> and <strong>ideas into products.</strong><br>
+      Marketing strategy built for brands that want to actually be remembered.
+    </p>
+    <a href="#contact" class="hero-cta">
+      Let's Talk
+      <i data-lucide="arrow-right"></i>
+    </a>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <p class="section-label">01 — About</p>
+    <div class="about-index">01</div>
+  </div>
+  <div class="about-right reveal" style="transition-delay:0.1s">
+    <p>I'm a <strong>digital marketing specialist</strong> who started with a hands-on apprenticeship and never stopped building. My background spans SEO, paid media, content strategy, email marketing, and campaign analytics — but what sets me apart is that I also think like a product designer.</p>
+    <p>I independently designed and shipped <strong>QuestLife</strong>, a full-featured gamified habit app with RPG mechanics, XP systems, and a dark-fantasy aesthetic. That kind of project requires you to understand user psychology, engagement loops, and UX just as deeply as copy or conversion.</p>
+    <p>I'm drawn to <strong>forward-thinking brands</strong> that want both rigorous analysis and genuine creative ambition. If you need someone who can write the brief and build the thing — I'm your person.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="skills-header reveal">
+    <div>
+      <p class="section-label">02 — Capabilities</p>
+      <h2>What I<br><em style="font-family:'Playfair Display',serif;font-style:italic;color:var(--amber)">bring.</em></h2>
+    </div>
+  </div>
+  <div class="skill-grid reveal" style="transition-delay:0.15s">
+    <div class="skill-item">
+      <span class="skill-num">01</span>
+      <span class="skill-name">SEO</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">02</span>
+      <span class="skill-name">Email Marketing</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">03</span>
+      <span class="skill-name">Content Strategy</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">04</span>
+      <span class="skill-name">Social Media</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">05</span>
+      <span class="skill-name">Paid Ads</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">06</span>
+      <span class="skill-name">Analytics</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">07</span>
+      <span class="skill-name">Campaign Management</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">08</span>
+      <span class="skill-name">UX Thinking</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">09</span>
+      <span class="skill-name">Product Design</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">10</span>
+      <span class="skill-name">AI Automation</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">11</span>
+      <span class="skill-name">Growth Strategy</span>
+    </div>
+    <div class="skill-item">
+      <span class="skill-num">12</span>
+      <span class="skill-name">Ecom & Paid Social</span>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label reveal">03 — Featured Work</p>
+  <h2 class="reveal" style="transition-delay:0.05s">Selected<br><em style="font-family:'Playfair Display',serif;font-style:italic;color:var(--amber)">projects.</em></h2>
+  <div class="projects-grid">
+
+    <div class="project-card reveal" style="transition-delay:0.1s">
+      <div class="project-tag">Product Design &amp; Dev</div>
+      <div class="project-title">QuestLife</div>
+      <p class="project-desc">
+        A full-featured gamified habit-tracking app I designed and built independently. Players earn XP, level up, unlock skill trees, and complete quests — all within a dark-fantasy RPG aesthetic built to feel rewarding, not manipulative. The project demonstrates deep competency in UX psychology, engagement loop design, progressive disclosure, and product-led growth thinking.
+      </p>
+      <div class="project-skills">
+        <span>Product Design</span>
+        <span>UX Psychology</span>
+        <span>Gamification</span>
+        <span>Frontend Dev</span>
+        <span>User Retention</span>
+      </div>
+      <a href="#" class="project-link">
+        View Project <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+      </a>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.2s">
+      <div class="project-tag">AI &amp; Automation</div>
+      <div class="project-title">AI Agents &<br>Automations</div>
+      <p class="project-desc">
+        Hands-on exploration of AI automation pipelines and agent-based systems — built to solve real workflow problems, not just demo-grade experiments. This includes prompt engineering, multi-step agent logic, and integrating AI tooling into marketing and product workflows. Shows ability to think in systems and adopt emerging tech early.
+      </p>
+      <div class="project-skills">
+        <span>AI Agents</span>
+        <span>Prompt Engineering</span>
+        <span>Automation</span>
+        <span>Workflow Design</span>
+      </div>
+      <a href="#" class="project-link">
+        View Project <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+      </a>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.3s">
+      <div class="project-tag">Ecommerce &amp; Paid Media</div>
+      <div class="project-title">Ecom Store &<br>Paid Ads</div>
+      <p class="project-desc">
+        Built and ran ecommerce operations end-to-end — from store setup and product positioning to running paid social campaigns and iterating on performance data. Developed hands-on understanding of ROAS, creative testing, audience segmentation, and conversion optimisation in a real commercial environment.
+      </p>
+      <div class="project-skills">
+        <span>Ecommerce</span>
+        <span>Paid Social</span>
+        <span>Creative Testing</span>
+        <span>Analytics</span>
+        <span>Conversion</span>
+      </div>
+      <a href="#" class="project-link">
+        View Project <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- SERVICES -->
+<div id="services">
+  <div class="inner">
+    <p class="section-label reveal">04 — Services</p>
+    <h2 class="reveal" style="transition-delay:0.05s">What I<br><em style="font-family:'Playfair Display',serif;font-style:italic;color:var(--amber)">offer.</em></h2>
+    <div class="services-grid">
+
+      <div class="service-card reveal" style="transition-delay:0.1s">
+        <span class="service-num">01</span>
+        <div class="service-title">Digital Marketing<br>Strategy</div>
+        <p class="service-desc">Full-funnel strategy built around your business objectives — from positioning and channel selection to campaign architecture and KPI frameworks. Data-informed, but never boring.</p>
+        <i data-lucide="compass" class="service-icon"></i>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay:0.2s">
+        <span class="service-num">02</span>
+        <div class="service-title">Content<br>&amp; SEO</div>
+        <p class="service-desc">Content strategy that serves both humans and search engines. Keyword research, editorial planning, on-page optimisation, and copy that actually converts — not just fills a brief.</p>
+        <i data-lucide="file-text" class="service-icon"></i>
+      </div>
+
+      <div class="service-card reveal" style="transition-delay:0.3s">
+        <span class="service-num">03</span>
+        <div class="service-title">Growth<br>&amp; Analytics</div>
+        <p class="service-desc">Turn your data into clear decisions. Reporting setup, performance analysis, A/B testing, audience insights, and iterative growth — applied to paid, organic, email, and product.</p>
+        <i data-lucide="trending-up" class="service-icon"></i>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left reveal">
+    <p class="section-label">05 — Contact</p>
+    <h2>Let's<br><em>make<br>something.</em></h2>
+    <p>Open to freelance projects, full-time roles, and interesting conversations. If you're building something worth caring about, let's talk.</p>
+  </div>
+  <div class="contact-links reveal" style="transition-delay:0.15s">
+    <a href="mailto:hello@danecreative.com" class="contact-link">
+      <div class="contact-link-label">
+        <span class="contact-link-type">Email</span>
+        <span class="contact-link-value">hello@danecreative.com</span>
+      </div>
+      <i data-lucide="arrow-up-right"></i>
+    </a>
+    <a href="https://linkedin.com/in/dane" target="_blank" class="contact-link">
+      <div class="contact-link-label">
+        <span class="contact-link-type">LinkedIn</span>
+        <span class="contact-link-value">linkedin.com/in/dane</span>
+      </div>
+      <i data-lucide="arrow-up-right"></i>
+    </a>
+    <a href="#" class="contact-link">
+      <div class="contact-link-label">
+        <span class="contact-link-type">Based in</span>
+        <span class="contact-link-value">United Kingdom — Open to Remote</span>
+      </div>
+      <i data-lucide="map-pin"></i>
+    </a>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span class="footer-amber">Dane</span> — All rights reserved</p>
+  <p>Designed & built with intent.</p>
+</footer>
+
+<script>
+  // Init Lucide icons
+  lucide.createIcons();
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .skill-item, .project-card, .service-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+
+  // Nav scroll state
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
